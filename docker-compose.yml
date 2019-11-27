@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  api:
+    # Uncomment for live-reload in development:
+    command: ['/start-reload.sh']
+
+    build: ./api
+    image: tgfeed:0.1.0
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 1337:80
+    volumes:
+      - ./api:/app
+    depends_on:
+      - db
+      - proxy
+  db:
+    image: mongo:4.2.1
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./db:/data/db
+  proxy:
+    image: dperson/torproxy
+    restart: unless-stopped

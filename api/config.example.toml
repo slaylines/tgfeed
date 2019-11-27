@@ -1,0 +1,16 @@
+[telegram]
+api_id = "YOUR_API_ID"
+api_hash = "YOUR_API_HASH"
+bot_token = "YOUR_BOT_TOKEN"
+channels = ["YOUR_CHANNEL"]
+session = "tgfeed"
+frequency = 5
+proxy = true
+
+[database]
+uri = "mongodb://api:password@db:27017"
+name = "tgfeed"
+
+[proxy]
+host = "proxy"
+port = 9050
