@@ -1,11 +1,13 @@
 import json
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
-from .tglib.config import dbconfig, tgconfig
+from .tglib.config import dbconfig, stconfig, tgconfig
 from .tglib.database import Database
+from .tglib.storage import Storage
 from .tglib.telegram import Telegram
 
 db = Database(dbconfig)
+st = Storage(stconfig)
 tg = Telegram(tgconfig)
 app = FastAPI()
 

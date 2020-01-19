@@ -16,6 +16,7 @@ services:
       - ./api:/app
     depends_on:
       - db
+      - storage
       - proxy
   db:
     image: mongo:4.2.1
@@ -24,6 +25,14 @@ services:
       - .env
     volumes:
       - ./db:/data/db
+  storage:
+    image: minio/minio:RELEASE.2020-01-16T22-40-29Z
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: server /data/storage
+    volumes:
+      - ./storage:/data/storage
   proxy:
     image: dperson/torproxy
     restart: unless-stopped

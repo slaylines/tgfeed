@@ -58,4 +58,4 @@ class Telegram:
 
   def __proxy(self):
     if hasattr(self, 'proxy'):
-      (socks.SOCKS5, self.proxy['host'], self.proxy['port'])
+      return (socks.SOCKS5, self.proxy['host'], self.proxy['port'])

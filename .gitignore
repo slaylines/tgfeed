@@ -4,3 +4,4 @@ __pycache__
 /api/config.toml
 /api/*.session*
 /db
+/storage
