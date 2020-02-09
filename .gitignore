@@ -3,5 +3,6 @@ __pycache__
 .env
 /api/config.toml
 /api/*.session*
+/api/log
 /db
 /storage

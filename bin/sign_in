@@ -2,4 +2,4 @@
 
 set -e
 
-docker-compose run --rm --entrypoint 'poetry run python app/sign_in.py' api
+docker-compose run --rm --entrypoint 'poetry run python src/sign_in.py' api
