@@ -1,5 +1,6 @@
 import io
 from uuid import uuid3, NAMESPACE_URL
+from telethon.extensions.html import unparse as unparse_html
 from telethon.utils import get_extension
 from .logger import logger
 
@@ -13,68 +14,83 @@ class MessageProcessor:
     method_name = '_process_' + message_type
     method = getattr(self, method_name, self._process_text)
 
-    await method(channel, message)
+    return await method(channel, message)
 
   async def _process_photo(self, channel, message):
     name = self._get_media_name(message.photo, channel.id, message.id, 'photo')
     media = await message.download_media(io.BytesIO())
     upload = self.storage.upload_fileobj(media, name)
+    html = self._message_to_html(message)
+
+    return {'html': html, 'upload': upload}
 
   async def _process_video(self, channel, message):
     logger.warning('Can not process message #%s of video type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_document(self, channel, message):
     logger.warning('Can not process message #%s of document type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_gif(self, channel, message):
     logger.warning('Can not process message #%s of gif type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_sticker(self, channel, message):
     logger.warning('Can not process message #%s of sticker type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_audio(self, channel, message):
     logger.warning('Can not process message #%s of audio type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_poll(self, channel, message):
     logger.warning('Can not process message #%s of poll type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_geo(self, channel, message):
     logger.warning('Can not process message #%s of geo type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_venue(self, channel, message):
     logger.warning('Can not process message #%s of venue type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_voice(self, channel, message):
     logger.warning('Can not process message #%s of voice type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_video_note(self, channel, message):
     logger.warning('Can not process message #%s of video_note type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_contact(self, channel, message):
     logger.warning('Can not process message #%s of contact type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_invoice(self, channel, message):
     logger.warning('Can not process message #%s of invoice type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
   async def _process_game(self, channel, message):
     logger.warning('Can not process message #%s of game type from %s' % (message.id, channel.title))
-    await self._process_text(channel, message)
+    return await self._process_text(channel, message)
 
+  # List of all possible entities:
+  # https://tl.telethon.dev/?q=MessageEntity
+  #
+  # Some of these methods can be useful:
+  # https://docs.telethon.dev/en/latest/modules/utils.html
+  #
+  # Example of HTML parsing in tests:
+  # https://github.com/LonamiWebs/Telethon/blob/master/tests/telethon/extensions/test_html.py
   async def _process_text(self, channel, message):
-    logger.info('Processing text...')
-    return
+    html = self._message_to_html(message)
+
+    return {'html': html}
+
+  def _message_to_html(self, message):
+    return unparse_html(message.raw_text, message.entities).replace('\n', '<br>')
 
   def _get_media_name(self, media, *parts):
     key = '/'.join(map(str, parts))
